@@ -1,0 +1,10 @@
+{
+    "name": "Push",
+    "time_window": 2.0,
+    "labels": [
+        "True",
+        "False",
+        "Deeper",
+        "Faster"
+    ]
+}

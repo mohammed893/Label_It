@@ -1,0 +1,11 @@
+{
+    "name": "Squat",
+    "pipeline": "pose",
+    "time_window": 4.0,
+    "labels": [
+        "true",
+        "false",
+        "deep",
+        "slower"
+    ]
+}

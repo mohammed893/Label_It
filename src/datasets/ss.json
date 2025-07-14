@@ -1,0 +1,9 @@
+{
+    "name": "ss",
+    "pipeline": "pose",
+    "time_window": 5.0,
+    "labels": [
+        "true",
+        "false"
+    ]
+}
