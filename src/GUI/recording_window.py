@@ -1,11 +1,10 @@
-import datetime
 import os
 import tkinter as tk
 from tkinter import ttk
 import cv2
 from PIL import Image, ImageTk
 import time
-
+from datetime import datetime
 from mediapipe_modules import get_pipeline_class
 from recorders.recorder import Recorder
 from utils.timestamp import get_timestamp
@@ -22,10 +21,8 @@ class RecordingWindow:
         self.window = tk.Toplevel()
         self.window.title(f"Recording - {config['name']}")
 
-        # Label
         tk.Label(self.window, text=f"Dataset: {config['name']}").pack()
 
-        # Frame for canvases
         video_frame = tk.Frame(self.window)
         video_frame.pack()
 
@@ -35,7 +32,6 @@ class RecordingWindow:
         self.canvas_landmarks = tk.Canvas(video_frame, width=640, height=480, bg="white")
         self.canvas_landmarks.grid(row=0, column=1)
 
-        # Label selection dropdown
         tk.Label(self.window, text="Select initial label:").pack()
         self.label_dropdown = ttk.Combobox(self.window, values=self.config["labels"])
         self.label_dropdown.pack(pady=5)
@@ -63,6 +59,8 @@ class RecordingWindow:
         self.start_time = None
         self.recorder = None
         self.current_label = None
+        self.video_writer = None
+        self.video_filename = None
 
         self.cap = cv2.VideoCapture(0)
         self.update_frame()
@@ -73,37 +71,31 @@ class RecordingWindow:
         self.running = False
         if self.cap:
             self.cap.release()
+        if self.video_writer:
+            self.video_writer.release()
         self.window.destroy()
-    def process_frame(self, frame_rgb):
-        # Your landmark extraction logic here...
-        timestamp = time.time()
-        
-        # Write video
-        frame_bgr = cv2.cvtColor(frame_rgb, cv2.COLOR_RGB2BGR)
-        self.video_writer.write(frame_bgr)
-        
+
     def start_recording(self):
         self.recording = True
         self.start_time = time.time()
+        self.start_button.config(state=tk.DISABLED)
+        self.stop_button.config(state=tk.NORMAL)
         self.current_label = self.label_dropdown.get()
+
+        # Create dataset-specific folder
+        dataset_folder = os.path.join("data", self.config["name"])
+        os.makedirs(dataset_folder, exist_ok=True)
 
         # Create CSV recorder
         self.recorder = Recorder(
-            output_folder="data",
+            output_folder=dataset_folder,
             label=self.current_label,
             selected_landmarks=self.config["selected_landmarks"]
         )
 
-        # Create video writer
+        # Prepare video filename
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        video_filename = os.path.join("data", f"record_{timestamp}.mp4")
-
-        width = self.frame_width
-        height = self.frame_height
-        fps = 30
-
-        fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-        self.video_writer = cv2.VideoWriter(video_filename, fourcc, fps, (width, height))
+        self.video_filename = os.path.join(dataset_folder, f"record_{timestamp}.mp4")
 
     def stop_recording(self):
         self.recording = False
@@ -131,11 +123,29 @@ class RecordingWindow:
 
         ret, frame = self.cap.read()
         if ret:
+            if not hasattr(self, "frame_width"):
+                self.frame_height, self.frame_width, _ = frame.shape
+
             frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             frame_landmarks, landmarks_only_img, landmarks_data = self.pipeline.process(frame_rgb)
 
             self._draw_on_canvas(frame_landmarks, self.canvas_video)
             self._draw_on_canvas(landmarks_only_img, self.canvas_landmarks)
+
+            if self.recording:
+                # Create video writer if needed
+                if self.video_writer is None:
+                    fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+                    fps = 30
+                    self.video_writer = cv2.VideoWriter(
+                        self.video_filename,
+                        fourcc,
+                        fps,
+                        (self.frame_width, self.frame_height)
+                    )
+
+                frame_bgr = cv2.cvtColor(frame_rgb, cv2.COLOR_RGB2BGR)
+                self.video_writer.write(frame_bgr)
 
             if self.recording and landmarks_data:
                 for landmarks in landmarks_data:

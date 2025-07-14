@@ -1,0 +1,21 @@
+{
+    "name": "Pose1",
+    "pipeline": "pose",
+    "time_window": 5.0,
+    "labels": [
+        "true",
+        "false",
+        "goDeep",
+        "Slower"
+    ],
+    "selected_landmarks": [
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        23,
+        24
+    ]
+}
