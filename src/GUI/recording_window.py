@@ -1,3 +1,5 @@
+import datetime
+import os
 import tkinter as tk
 from tkinter import ttk
 import cv2
@@ -72,20 +74,37 @@ class RecordingWindow:
         if self.cap:
             self.cap.release()
         self.window.destroy()
-
+    def process_frame(self, frame_rgb):
+        # Your landmark extraction logic here...
+        timestamp = time.time()
+        
+        # Write video
+        frame_bgr = cv2.cvtColor(frame_rgb, cv2.COLOR_RGB2BGR)
+        self.video_writer.write(frame_bgr)
+        
     def start_recording(self):
         self.recording = True
         self.start_time = time.time()
-        self.start_button.config(state=tk.DISABLED)
-        self.stop_button.config(state=tk.NORMAL)
-
         self.current_label = self.label_dropdown.get()
-        self.label_var.set(f"Label: {self.current_label}")
+
+        # Create CSV recorder
         self.recorder = Recorder(
             output_folder="data",
             label=self.current_label,
             selected_landmarks=self.config["selected_landmarks"]
         )
+
+        # Create video writer
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        video_filename = os.path.join("data", f"record_{timestamp}.mp4")
+
+        width = self.frame_width
+        height = self.frame_height
+        fps = 30
+
+        fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+        self.video_writer = cv2.VideoWriter(video_filename, fourcc, fps, (width, height))
+
     def stop_recording(self):
         self.recording = False
         self.start_button.config(state=tk.NORMAL)
@@ -94,6 +113,9 @@ class RecordingWindow:
         if self.recorder:
             self.recorder.close()
             self.recorder = None
+        if self.video_writer:
+            self.video_writer.release()
+            self.video_writer = None
 
     def key_pressed(self, event):
         key = event.char.upper()
