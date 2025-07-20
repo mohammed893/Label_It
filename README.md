@@ -44,7 +44,7 @@ Label-It/
 
 1. **Clone the repo**:
     ```bash
-    git clone https://github.com/your-username/label-it
+    git clone https://github.com/mohammed893/Label_It.git
     cd label-it
     ```
 
@@ -63,7 +63,12 @@ Label-It/
 ## 📸 Screenshots
 
 <!-- Add your own screenshots -->
-<img src="docs/preview.png" width="600" alt="Live Recording UI"/>
+## Set the landmarks you want to store, define the time window, and label your data interactively.
+
+<img src="docs/image.png" width="600" alt="Live Recording UI"/>
+
+## Easily record labeled pose data with start/stop buttons and live visualization.
+<img src="docs/image_2.png" width="600" alt="Live Recording UI"/>
 
 ---
 

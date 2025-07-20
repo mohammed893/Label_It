@@ -1,0 +1,20 @@
+{
+    "name": "Dataset 1",
+    "pipeline": "pose",
+    "time_window": 3.0,
+    "labels": [
+        "True",
+        "False",
+        "Go_Deeper"
+    ],
+    "selected_landmarks": [
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        23,
+        24
+    ]
+}
