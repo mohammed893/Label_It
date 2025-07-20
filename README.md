@@ -1,6 +1,6 @@
 
 # 📸 Label-It – AI Gesture Data Labeling Tool
-**Part of the [FlexiScan](#) Project – A Vision-Driven Gesture Recognition Platform**
+**Part of the [FlexiScan](https://flexiscan.life/?i=1) Project – A Vision-Driven Gesture Recognition Platform**
 
 Label-It is a custom Python application for collecting and labeling gesture data using live video and MediaPipe landmarks. It helps researchers and developers create clean, organized datasets for training ML models in hand tracking, human pose estimation, sign language recognition, and more.
 
