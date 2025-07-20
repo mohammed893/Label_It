@@ -12,7 +12,7 @@ os.makedirs(DATASET_FOLDER, exist_ok=True)
 class MainWindow:
     def __init__(self, master, launch_recording_callback):
         self.master = master
-        self.master.title("Mediapipe Data Collector")
+        self.master.title("Flexi Data Collector app")
 
         self.dataset_listbox = tk.Listbox(master, width=50, height=10)
         self.dataset_listbox.pack(pady=10)
